@@ -6,6 +6,7 @@ import com.sing.mobileappws.ui.model.request.UserDetailsRequestModel;
 import com.sing.mobileappws.ui.model.response.UserRest;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +16,12 @@ public class UserController {
     @Autowired
     UserService userService;
 
-    @GetMapping(path = "/{id}")
+    @GetMapping(
+            path = "/{id}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
     public UserRest getUser(@PathVariable String id) {
         UserRest response = new UserRest();
 
@@ -25,7 +31,15 @@ public class UserController {
         return response;
     }
 
-    @PostMapping
+    @PostMapping(
+            consumes = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            },
+            produces = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            })
     public UserRest createUser(@RequestBody UserDetailsRequestModel userDetailsRequestModel) {
         UserRest response = new UserRest();
         UserDto userDto = new UserDto();
