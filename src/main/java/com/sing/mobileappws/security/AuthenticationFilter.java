@@ -60,7 +60,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         String token = Jwts.builder()
                         .setSubject(userName)
                         .setExpiration(new Date(System.currentTimeMillis() + SecutityConstants.EXPIRATION_TIME))
-                        .signWith(SignatureAlgorithm.HS512, SecutityConstants.TOKEN_SECRET)
+                        .signWith(SignatureAlgorithm.HS512, SecutityConstants.getTokenSecret())
                         .compact();
 
         //Cannot use autowired so had to do like this
