@@ -37,7 +37,7 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
         Authentication authenticate = null;
 
-        try{
+        try {
             UserLoginRequestModel creds = new ObjectMapper().readValue(request.getInputStream(), UserLoginRequestModel.class);
             authenticate = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -56,15 +56,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        String userName = ((User)authResult.getPrincipal()).getUsername();
+        String userName = ((User) authResult.getPrincipal()).getUsername();
         String token = Jwts.builder()
-                        .setSubject(userName)
-                        .setExpiration(new Date(System.currentTimeMillis() + SecutityConstants.EXPIRATION_TIME))
-                        .signWith(SignatureAlgorithm.HS512, SecutityConstants.getTokenSecret())
-                        .compact();
+                .setSubject(userName)
+                .setExpiration(new Date(System.currentTimeMillis() + SecutityConstants.EXPIRATION_TIME))
+                .signWith(SignatureAlgorithm.HS512, SecutityConstants.getTokenSecret())
+                .compact();
 
         //Cannot use autowired so had to do like this
-        UserService userService = (UserService)SpringApplicationContext.getBean("userServiceImpl");
+        UserService userService = (UserService) SpringApplicationContext.getBean("userServiceImpl");
 
         UserDto userDto = userService.getUser(userName);
 

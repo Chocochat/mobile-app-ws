@@ -8,7 +8,7 @@ public class SecutityConstants {
     public static final String HEADER_STRING = "Authorization";
     public static final String SIGN_UP_URL = "/users";
 
-    public static String getTokenSecret(){
+    public static String getTokenSecret() {
         AppProperties appProperties = (AppProperties) SpringApplicationContext.getBean("AppProperties");
         return appProperties.getTokenSecret();
     }

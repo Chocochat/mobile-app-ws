@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Utils {
-    public String generateUserId(int length){
+    public String generateUserId(int length) {
         String generatedString = RandomStringUtils.randomAlphanumeric(length);
         return generatedString;
     }

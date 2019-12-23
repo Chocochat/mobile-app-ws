@@ -10,7 +10,8 @@ import java.io.Serializable;
 @Data
 public class UserDto implements Serializable {
 
-    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private static final long serialVersionUID = 1L;
     private long id;
     private String userId;

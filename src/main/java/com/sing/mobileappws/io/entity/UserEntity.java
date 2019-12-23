@@ -12,10 +12,11 @@ import javax.persistence.Id;
 import java.io.Serializable;
 
 @Data
-@Entity(name="users")
+@Entity(name = "users")
 public class UserEntity implements Serializable {
 
-    @Getter(AccessLevel.NONE) @Setter(AccessLevel.NONE)
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
     private static final long serialVersionUID = 1L;
 
     @Id
@@ -31,7 +32,7 @@ public class UserEntity implements Serializable {
     @Column(nullable = false, length = 50)
     private String lastName;
 
-//    @Column(nullable = false, length = 120, unique = true)
+    //    @Column(nullable = false, length = 120, unique = true)
     @Column(nullable = false, length = 120)
     private String email;
 

@@ -1,7 +1,7 @@
 package com.sing.mobileappws.service.impl;
 
-import com.sing.mobileappws.io.repositories.UserRepository;
 import com.sing.mobileappws.io.entity.UserEntity;
+import com.sing.mobileappws.io.repositories.UserRepository;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
 import com.sing.mobileappws.ui.shared.Utils;
