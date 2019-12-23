@@ -3,8 +3,11 @@ package com.sing.mobileappws.ui.controller;
 import com.sing.mobileappws.exceptions.UserServiceExceptions;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
+import com.sing.mobileappws.ui.model.request.RequestOperationName;
+import com.sing.mobileappws.ui.model.request.RequestOperationStatus;
 import com.sing.mobileappws.ui.model.request.UserDetailsRequestModel;
 import com.sing.mobileappws.ui.model.response.ErrorMessages;
+import com.sing.mobileappws.ui.model.response.OperationStatusModel;
 import com.sing.mobileappws.ui.model.response.UserRest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
@@ -98,8 +101,21 @@ public class UserController {
         return response;
     }
 
-    @DeleteMapping
-    public String deleteUser() {
-        return "Delete";
+    @DeleteMapping(
+            path = "/{id}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
+    public OperationStatusModel deleteUser(@PathVariable String id) {
+
+        OperationStatusModel operationStatusModel = new OperationStatusModel();
+
+        userService.deleteUser(id);
+
+        operationStatusModel.setOperationName(RequestOperationName.DELETE.name());
+        operationStatusModel.setOperationResult(RequestOperationStatus.SUCCESS.name());
+
+        return operationStatusModel;
     }
 }
