@@ -1,9 +1,12 @@
 package com.sing.mobileappws.ui.controller;
 
+import com.sing.mobileappws.exceptions.UserServiceExceptions;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
 import com.sing.mobileappws.ui.model.request.UserDetailsRequestModel;
+import com.sing.mobileappws.ui.model.response.ErrorMessages;
 import com.sing.mobileappws.ui.model.response.UserRest;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -44,10 +47,17 @@ public class UserController {
                     MediaType.APPLICATION_JSON_VALUE
             },
             produces = {
-                    MediaType.APPLICATION_XML_VALUE,
-                    MediaType.APPLICATION_JSON_VALUE
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
             })
     public UserRest createUser(@RequestBody UserDetailsRequestModel userDetailsRequestModel) {
+
+        if(StringUtils.isAllEmpty(userDetailsRequestModel.getFirstName())) {
+            throw new UserServiceExceptions(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+            // Example to trigger handleOtherException
+//            throw new NullPointerException("null");
+        }
+
         UserRest response = new UserRest();
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(userDetailsRequestModel, userDto);
