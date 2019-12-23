@@ -54,7 +54,7 @@ public class UserController {
 
         if(StringUtils.isAllEmpty(userDetailsRequestModel.getFirstName())) {
             throw new UserServiceExceptions(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
-            // Example to trigger handleOtherException
+//            Example to trigger handleOtherException
 //            throw new NullPointerException("null");
         }
 
@@ -69,9 +69,33 @@ public class UserController {
         return response;
     }
 
-    @PutMapping
-    public String updateUser() {
-        return "put";
+    @PutMapping(
+            path = "/{id}",
+            consumes = {
+                    MediaType.APPLICATION_XML_VALUE,
+                    MediaType.APPLICATION_JSON_VALUE
+            },
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
+    public UserRest updateUser(@PathVariable String id, @RequestBody UserDetailsRequestModel userDetailsRequestModel) {
+
+        if(StringUtils.isAllEmpty(userDetailsRequestModel.getFirstName())) {
+            throw new UserServiceExceptions(ErrorMessages.MISSING_REQUIRED_FIELD.getErrorMessage());
+//            Example to trigger handleOtherException
+//            throw new NullPointerException("null");
+        }
+
+        UserRest response = new UserRest();
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(userDetailsRequestModel, userDto);
+
+        UserDto updatedUser = userService.updateUser(id, userDto);
+
+        BeanUtils.copyProperties(updatedUser, response);
+
+        return response;
     }
 
     @DeleteMapping

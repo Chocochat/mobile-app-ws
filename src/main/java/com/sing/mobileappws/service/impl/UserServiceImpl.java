@@ -1,9 +1,11 @@
 package com.sing.mobileappws.service.impl;
 
+import com.sing.mobileappws.exceptions.UserServiceExceptions;
 import com.sing.mobileappws.io.entity.UserEntity;
 import com.sing.mobileappws.io.repositories.UserRepository;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
+import com.sing.mobileappws.ui.model.response.ErrorMessages;
 import com.sing.mobileappws.ui.shared.Utils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,4 +75,22 @@ public class UserServiceImpl implements UserService {
         BeanUtils.copyProperties(userEntity, userDto);
         return userDto;
     }
+
+    @Override
+    public UserDto updateUser(String id, UserDto userDto) {
+        UserDto response = new UserDto();
+        UserEntity userEntity = userRepository.findByUserId(id);
+
+        if (userEntity == null) throw new UserServiceExceptions(ErrorMessages.NO_RECORD_FOUND.getErrorMessage());
+
+        userEntity.setFirstName(userDto.getFirstName());
+        userEntity.setLastName(userDto.getLastName());
+
+        UserEntity entity = userRepository.save(userEntity);
+
+        BeanUtils.copyProperties(entity, response);
+
+        return response;
+    }
+
 }
