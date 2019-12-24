@@ -17,6 +17,8 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -172,7 +174,7 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE,
                     "application/hal+json"
             })
-    public List<AddressesRest> getUserAddresses(@PathVariable String id) {
+    public CollectionModel<AddressesRest> getUserAddresses(@PathVariable String id) {
 
         List<AddressesRest> resp = new ArrayList<>();
 
@@ -189,7 +191,7 @@ public class UserController {
             }
         }
 
-        return resp;
+        return new CollectionModel<>(resp);
     }
 
     @GetMapping(
@@ -199,7 +201,7 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE,
                     "application/hal+json"
             })
-    public AddressesRest getUserAddress(@PathVariable String id, @PathVariable String addressId) {
+    public EntityModel<AddressesRest> getUserAddress(@PathVariable String id, @PathVariable String addressId) {
 
 
         AddressDTO addressDTO = addressesService.getAddress(addressId);
@@ -219,6 +221,6 @@ public class UserController {
         resp.add(userLink);
         resp.add(addressessLink);
 
-        return resp;
+        return new EntityModel<>(resp);
     }
 }
