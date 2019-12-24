@@ -1,15 +1,20 @@
 package com.sing.mobileappws.ui.controller;
 
 import com.sing.mobileappws.exceptions.UserServiceExceptions;
+import com.sing.mobileappws.service.AddressDTO;
+import com.sing.mobileappws.service.AddressesService;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
 import com.sing.mobileappws.ui.model.request.RequestOperationName;
 import com.sing.mobileappws.ui.model.request.RequestOperationStatus;
 import com.sing.mobileappws.ui.model.request.UserDetailsRequestModel;
+import com.sing.mobileappws.ui.model.response.AddressesRest;
 import com.sing.mobileappws.ui.model.response.ErrorMessages;
 import com.sing.mobileappws.ui.model.response.OperationStatusModel;
 import com.sing.mobileappws.ui.model.response.UserRest;
 import org.apache.commons.lang3.StringUtils;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,6 +39,9 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    AddressesService addressesService;
+
     @GetMapping(
             path = "/{id}",
             produces = {
@@ -40,11 +49,14 @@ public class UserController {
                     MediaType.APPLICATION_XML_VALUE
             })
     public UserRest getUser(@PathVariable String id) {
-        UserRest response = new UserRest();
 
         UserDto userDto = userService.getUserByUserID(id);
 
-        BeanUtils.copyProperties(userDto, response);
+//        UserRest response = new UserRest();
+//        BeanUtils.copyProperties(userDto, response);
+        ModelMapper modelMapper = new ModelMapper();
+        UserRest response = modelMapper.map(userDto, UserRest.class);
+
         return response;
     }
 
@@ -65,14 +77,18 @@ public class UserController {
 //            throw new NullPointerException("null");
         }
 
-        UserRest response = new UserRest();
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(userDetailsRequestModel, userDto);
+//        UserRest response = new UserRest();
+//        BeanUtils doesnt copy properties for nested objects so mobelmapper can be user
+//        UserDto userDto = new UserDto();
+//        BeanUtils.copyProperties(userDetailsRequestModel, userDto);
+
+        ModelMapper modelMapper = new ModelMapper();
+        UserDto userDto = modelMapper.map(userDetailsRequestModel, UserDto.class);
 
         UserDto createUser = userService.createUser(userDto);
 
-        BeanUtils.copyProperties(createUser, response);
-
+//        BeanUtils.copyProperties(createUser, response);
+        UserRest response = modelMapper.map(createUser, UserRest.class);
         return response;
     }
 
@@ -143,5 +159,41 @@ public class UserController {
 
         return response;
 
+    }
+
+    @GetMapping(
+            path = "/{id}/addresses",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
+    public List<AddressesRest> getUserAddresses(@PathVariable String id) {
+
+        List<AddressesRest> resp = new ArrayList<>();
+
+        List<AddressDTO> addressDTO = addressesService.getAddresses(id);
+
+        if (addressDTO != null && !addressDTO.isEmpty()) {
+            Type listType = new TypeToken<List<AddressesRest>>() {}.getType();
+            resp = new ModelMapper().map(addressDTO, listType);
+        }
+
+        return resp;
+    }
+
+    @GetMapping(
+            path = "/{id}/addresses/{addressId}",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
+    public AddressesRest getUserAddress(@PathVariable String addressId) {
+
+
+        AddressDTO addressDTO = addressesService.getAddress(addressId);
+
+        AddressesRest resp = new ModelMapper().map(addressDTO, AddressesRest.class);
+
+        return resp;
     }
 }

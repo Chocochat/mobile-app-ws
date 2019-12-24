@@ -3,10 +3,12 @@ package com.sing.mobileappws.service.impl;
 import com.sing.mobileappws.exceptions.UserServiceExceptions;
 import com.sing.mobileappws.io.entity.UserEntity;
 import com.sing.mobileappws.io.repositories.UserRepository;
+import com.sing.mobileappws.service.AddressDTO;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
 import com.sing.mobileappws.ui.model.response.ErrorMessages;
 import com.sing.mobileappws.ui.shared.Utils;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,17 +41,28 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userDto.getEmail()) != null)
             throw new RuntimeException("Record already exists: " + userDto.getEmail());
 
-        UserEntity userEntity = new UserEntity();
-        BeanUtils.copyProperties(userDto, userEntity);
+        for(int i=0; i<userDto.getAddresses().size();i++){
+            AddressDTO address = userDto.getAddresses().get(i);
+            address.setUserDetails(userDto);
+            address.setAddressId(utils.generateAddressId(30));
+            userDto.getAddresses().set(i, address);
+        }
+
+//        UserEntity userEntity = new UserEntity();
+//        BeanUtils.copyProperties(userDto, userEntity);
+
+        ModelMapper modelMapper = new ModelMapper();
+        UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
 
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
         userEntity.setUserId(utils.generateUserId(30));
 
         UserEntity save = userRepository.save(userEntity);
 
-        UserDto response = new UserDto();
-        BeanUtils.copyProperties(save, response);
+//        UserDto response = new UserDto();
+//        BeanUtils.copyProperties(save, response);
 
+        UserDto response = modelMapper.map(save, UserDto.class);
         return response;
     }
 

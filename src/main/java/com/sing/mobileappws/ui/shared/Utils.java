@@ -10,4 +10,9 @@ public class Utils {
         return generatedString;
     }
 
+    public String generateAddressId(int length) {
+        String generatedString = RandomStringUtils.randomAlphanumeric(length);
+        return generatedString;
+    }
+
 }
