@@ -223,4 +223,27 @@ public class UserController {
 
         return new EntityModel<>(resp);
     }
+
+    @GetMapping(
+            path = "/email-verification",
+            produces = {
+                    MediaType.APPLICATION_JSON_VALUE,
+                    MediaType.APPLICATION_XML_VALUE
+            })
+    public OperationStatusModel verifyEmailToken(@RequestParam(value = "token") String token) {
+
+        OperationStatusModel response = new OperationStatusModel();
+
+        response.setOperationName(RequestOperationName.VERIFY_EMAIL.name());
+
+        boolean isVerified = userService.verifyEmailToken(token);
+
+        if (isVerified) {
+            response.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        } else {
+            response.setOperationResult(RequestOperationStatus.ERROR.name());
+        }
+
+        return response;
+    }
 }

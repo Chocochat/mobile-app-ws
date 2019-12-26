@@ -7,6 +7,7 @@ import com.sing.mobileappws.service.AddressDTO;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
 import com.sing.mobileappws.ui.model.response.ErrorMessages;
+import com.sing.mobileappws.ui.shared.AmazonSES;
 import com.sing.mobileappws.ui.shared.Utils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.BeanUtils;
@@ -41,7 +42,7 @@ public class UserServiceImpl implements UserService {
         if (userRepository.findByEmail(userDto.getEmail()) != null)
             throw new RuntimeException("Record already exists: " + userDto.getEmail());
 
-        for(int i=0; i<userDto.getAddresses().size();i++){
+        for (int i = 0; i < userDto.getAddresses().size(); i++) {
             AddressDTO address = userDto.getAddresses().get(i);
             address.setUserDetails(userDto);
             address.setAddressId(utils.generateAddressId(30));
@@ -54,8 +55,12 @@ public class UserServiceImpl implements UserService {
         ModelMapper modelMapper = new ModelMapper();
         UserEntity userEntity = modelMapper.map(userDto, UserEntity.class);
 
+        String publicUserId = utils.generateUserId(30);
         userEntity.setEncryptedPassword(bCryptPasswordEncoder.encode(userDto.getPassword()));
-        userEntity.setUserId(utils.generateUserId(30));
+        userEntity.setUserId(publicUserId);
+        // generate and set token
+        userEntity.setEmailVerificationToken(utils.generateEmailVerifivationToken(publicUserId));
+        userEntity.setEmailVerificationStatus(false);
 
         UserEntity save = userRepository.save(userEntity);
 
@@ -63,6 +68,10 @@ public class UserServiceImpl implements UserService {
 //        BeanUtils.copyProperties(save, response);
 
         UserDto response = modelMapper.map(save, UserDto.class);
+
+        //send Email
+        new AmazonSES().verifyEmail(response);
+
         return response;
     }
 
@@ -70,9 +79,19 @@ public class UserServiceImpl implements UserService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
         UserEntity userEntity = userRepository.findByEmail(email);
+
         if (userEntity == null) throw new UsernameNotFoundException(email);
 
-        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+//        return new User(userEntity.getEmail(), userEntity.getEncryptedPassword(), new ArrayList<>());
+
+        return new User(
+                userEntity.getEmail(),
+                userEntity.getEncryptedPassword(),
+                userEntity.getEmailVerificationStatus(),
+                true,
+                true,
+                true,
+                new ArrayList<>());
     }
 
     @Override
@@ -138,6 +157,25 @@ public class UserServiceImpl implements UserService {
         }
 
         return userList;
+    }
+
+    @Override
+    public boolean verifyEmailToken(String token) {
+        boolean emailVerified = false;
+
+        UserEntity userEntity = userRepository.findUserByEmailVerificationToken(token);
+
+        if (userEntity != null) {
+            boolean hasTokenExpired = utils.hasTokenExpired(token);
+            if (!hasTokenExpired) {
+                userEntity.setEmailVerificationToken(null);
+                userEntity.setEmailVerificationStatus(Boolean.TRUE);
+                userRepository.save(userEntity);
+                emailVerified = true;
+            }
+        }
+
+        return emailVerified;
     }
 
 }
