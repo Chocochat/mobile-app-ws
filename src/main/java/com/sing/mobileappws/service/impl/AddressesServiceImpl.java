@@ -34,7 +34,7 @@ public class AddressesServiceImpl implements AddressesService {
 
         Iterable<AddressEntity> addresses = addressRepository.findAllByUserDetails(userEntity);
 
-        for (AddressEntity addressEntity: addresses){
+        for (AddressEntity addressEntity : addresses) {
 
             resp.add(new ModelMapper().map(addressEntity, AddressDTO.class));
         }

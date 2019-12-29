@@ -82,8 +82,7 @@ public class AmazonSES {
 
     }
 
-    public boolean sendPasswordResetRequest(String firstName, String email, String token)
-    {
+    public boolean sendPasswordResetRequest(String firstName, String email, String token) {
         boolean returnValue = false;
 
         AmazonSimpleEmailService client =
@@ -99,7 +98,7 @@ public class AmazonSES {
 
         SendEmailRequest request = new SendEmailRequest()
                 .withDestination(
-                        new Destination().withToAddresses( email ) )
+                        new Destination().withToAddresses(email))
                 .withMessage(new Message()
                         .withBody(new Body()
                                 .withHtml(new Content()
@@ -111,8 +110,7 @@ public class AmazonSES {
                 .withSource(FROM);
 
         SendEmailResult result = client.sendEmail(request);
-        if(result != null && (result.getMessageId()!=null && !result.getMessageId().isEmpty()))
-        {
+        if (result != null && (result.getMessageId() != null && !result.getMessageId().isEmpty())) {
             returnValue = true;
         }
 

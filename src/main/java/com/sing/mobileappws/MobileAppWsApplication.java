@@ -11,6 +11,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @SpringBootApplication
 public class MobileAppWsApplication extends SpringBootServletInitializer {
 
+    public static void main(String[] args) {
+        SpringApplication.run(MobileAppWsApplication.class, args);
+    }
+
     // Required to use it as a WAR file without tomcat server and update pom xml as well
     // <packaging>war</packaging>
     // <dependency>
@@ -21,10 +25,6 @@ public class MobileAppWsApplication extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(MobileAppWsApplication.class);
-    }
-
-    public static void main(String[] args) {
-        SpringApplication.run(MobileAppWsApplication.class, args);
     }
 
     @Bean

@@ -11,6 +11,7 @@ public class ErrorMessage {
 
     public ErrorMessage() {
     }
+
     public ErrorMessage(Date timeStamp, String message) {
         this.timeStamp = timeStamp;
         this.message = message;

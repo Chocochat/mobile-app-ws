@@ -158,7 +158,7 @@ public class UserController {
 
         List<UserDto> users = userService.getUsers(page, limit);
 
-        for (UserDto user : users){
+        for (UserDto user : users) {
             UserRest userRest = new UserRest();
             BeanUtils.copyProperties(user, userRest);
             response.add(userRest);
@@ -182,9 +182,10 @@ public class UserController {
         List<AddressDTO> addressDTO = addressesService.getAddresses(id);
 
         if (addressDTO != null && !addressDTO.isEmpty()) {
-            Type listType = new TypeToken<List<AddressesRest>>() {}.getType();
+            Type listType = new TypeToken<List<AddressesRest>>() {
+            }.getType();
             resp = new ModelMapper().map(addressDTO, listType);
-            for (AddressesRest addressesRest: resp) {
+            for (AddressesRest addressesRest : resp) {
                 Link addressLink = linkTo(methodOn(UserController.class).getUserAddress(id, addressesRest.getAddressId())).withSelfRel();
                 addressesRest.add(addressLink);
                 Link userLink = linkTo(methodOn(UserController.class).getUser(id)).withRel("user");
@@ -263,7 +264,7 @@ public class UserController {
         returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
         returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
 
-        if(operationResult) {
+        if (operationResult) {
             returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
         }
 

@@ -16,18 +16,18 @@ import java.io.Serializable;
 @Entity(name = "password_reset_tokens")
 public class PasswordResetTokenEntity implements Serializable {
 
-	@Getter(AccessLevel.NONE)
-	@Setter(AccessLevel.NONE)
-	private static final long serialVersionUID = 8051324316462829780L;
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    private static final long serialVersionUID = 8051324316462829780L;
 
-	@Id
-	@GeneratedValue
-	private long id;
+    @Id
+    @GeneratedValue
+    private long id;
 
-	private String token;
+    private String token;
 
-	@OneToOne()
-	@JoinColumn(name = "users_id")
-	private UserEntity userDetails;
+    @OneToOne()
+    @JoinColumn(name = "users_id")
+    private UserEntity userDetails;
 
 }

@@ -14,7 +14,7 @@ import java.util.Date;
 public class AppExceptionsHandler {
 
     @ExceptionHandler(value = {UserServiceExceptions.class})
-    public ResponseEntity<Object> handleUserServiceException(UserServiceExceptions userServiceExceptions, WebRequest webRequest){
+    public ResponseEntity<Object> handleUserServiceException(UserServiceExceptions userServiceExceptions, WebRequest webRequest) {
 
         ErrorMessage errorMessage = new ErrorMessage(new Date(), userServiceExceptions.getMessage());
 
@@ -22,7 +22,7 @@ public class AppExceptionsHandler {
     }
 
     @ExceptionHandler(value = {Exception.class})
-    public ResponseEntity<Object> handleOtherException(Exception exception, WebRequest webRequest){
+    public ResponseEntity<Object> handleOtherException(Exception exception, WebRequest webRequest) {
 
         ErrorMessage errorMessage = new ErrorMessage(new Date(), exception.getMessage());
 
