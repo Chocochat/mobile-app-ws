@@ -1,7 +1,9 @@
 package com.sing.mobileappws.service.impl;
 
 import com.sing.mobileappws.exceptions.UserServiceExceptions;
+import com.sing.mobileappws.io.entity.PasswordResetTokenEntity;
 import com.sing.mobileappws.io.entity.UserEntity;
+import com.sing.mobileappws.io.repositories.PasswordResetTokenRepository;
 import com.sing.mobileappws.io.repositories.UserRepository;
 import com.sing.mobileappws.service.AddressDTO;
 import com.sing.mobileappws.service.UserDto;
@@ -35,6 +37,10 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    PasswordResetTokenRepository passwordResetTokenRepository;
+
 
     @Override
     public UserDto createUser(UserDto userDto) {
@@ -176,6 +182,32 @@ public class UserServiceImpl implements UserService {
         }
 
         return emailVerified;
+    }
+
+    @Override
+    public boolean requestPasswordReset(String email) {
+
+        boolean returnValue = false;
+
+        UserEntity userEntity = userRepository.findByEmail(email);
+
+        if (userEntity == null) {
+            return returnValue;
+        }
+
+        String token = new Utils().generatePasswordResetToken(userEntity.getUserId());
+
+        PasswordResetTokenEntity passwordResetTokenEntity = new PasswordResetTokenEntity();
+        passwordResetTokenEntity.setToken(token);
+        passwordResetTokenEntity.setUserDetails(userEntity);
+        passwordResetTokenRepository.save(passwordResetTokenEntity);
+
+        returnValue = new AmazonSES().sendPasswordResetRequest(
+                userEntity.getFirstName(),
+                userEntity.getEmail(),
+                token);
+
+        return returnValue;
     }
 
 }

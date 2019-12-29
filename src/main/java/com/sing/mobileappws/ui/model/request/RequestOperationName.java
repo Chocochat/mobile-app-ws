@@ -1,7 +1,8 @@
 package com.sing.mobileappws.ui.model.request;
 
-import javax.tools.Tool;
-
 public enum RequestOperationName {
-    DELETE, VERIFY_EMAIL;
+    DELETE,
+    VERIFY_EMAIL,
+    REQUEST_PASSWORD_RESET,
+    PASSWORD_RESET
 }

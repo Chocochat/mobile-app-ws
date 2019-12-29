@@ -5,6 +5,7 @@ import com.sing.mobileappws.service.AddressDTO;
 import com.sing.mobileappws.service.AddressesService;
 import com.sing.mobileappws.service.UserDto;
 import com.sing.mobileappws.service.UserService;
+import com.sing.mobileappws.ui.model.request.PasswordResetRequestModel;
 import com.sing.mobileappws.ui.model.request.RequestOperationName;
 import com.sing.mobileappws.ui.model.request.RequestOperationStatus;
 import com.sing.mobileappws.ui.model.request.UserDetailsRequestModel;
@@ -245,5 +246,27 @@ public class UserController {
         }
 
         return response;
+    }
+
+    /*
+     * http://localhost:8080/mobile-app-ws/users/password-reset-request
+     * */
+    @PostMapping(path = "/password-reset-request",
+            produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE},
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE}
+    )
+    public OperationStatusModel requestReset(@RequestBody PasswordResetRequestModel passwordResetRequestModel) {
+        OperationStatusModel returnValue = new OperationStatusModel();
+
+        boolean operationResult = userService.requestPasswordReset(passwordResetRequestModel.getEmail());
+
+        returnValue.setOperationName(RequestOperationName.REQUEST_PASSWORD_RESET.name());
+        returnValue.setOperationResult(RequestOperationStatus.ERROR.name());
+
+        if(operationResult) {
+            returnValue.setOperationResult(RequestOperationStatus.SUCCESS.name());
+        }
+
+        return returnValue;
     }
 }
